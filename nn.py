@@ -39,9 +39,32 @@ class Linear:
 
 
 class MSELoss:
-    def __call__(self, label, output):
+    def __init__(self):
         self.label = None
         self.output = None
 
+    def __call__(self, label, output):
+        self.label = label
+        self.output = output
+        mse = 0.5 * np.mean((label - output) ** 2, axis=1)
+        return mse
+
     def gradient(self):
-        pass
+        grad_y = (self.output - self.label) / self.output.shape[1]
+        return grad_y
+
+
+class Sigmoid:
+    # a = g(z)
+
+    def __init__(self):
+        self.z = None
+
+    def __call__(self, z, network=None):
+        self.z = z
+        return 1 / (1 + np.exp(-z))
+
+    def gradient(self, grad_a):
+        sigma_z = 1 / (1 + np.exp(-self.z))
+        grad_z = grad_a * sigma_z * (1 - sigma_z)
+        return grad_z
