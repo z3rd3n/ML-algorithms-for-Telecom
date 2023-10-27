@@ -4,7 +4,7 @@ import numpy as np
 # Some side notes:
 # Here every vector defined like a matrix, for example
 # Nx1 vector is of (N, ) but we define it like a matrix (N,1)
-# to allow efficient matrix multiplication
+# to allow efficient matrix multiplication like
 
 class Linear:
     # z = Wa+b
