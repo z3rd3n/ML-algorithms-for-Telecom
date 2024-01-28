@@ -1,6 +1,7 @@
 import nn
 import numpy as np
 from matplotlib import pyplot as plt
+from tqdm import tqdm
 
 
 # Define the neural network model
@@ -39,7 +40,7 @@ y = 3*x+4+np.sqrt(0.9)*np.random.randn(1, N_training)
 criterion = nn.MSELoss()
 
 loss_vec = []
-for epoch in range(num_epochs):
+for epoch in tqdm(range(num_epochs)):
     outputs = model(y)
 
     loss = criterion(x, outputs, model)
