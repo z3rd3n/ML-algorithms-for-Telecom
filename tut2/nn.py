@@ -15,6 +15,9 @@ class Linear:
     def __call__(self, a, network=None):
         self.a = a
         self.z = self.b + self.w @ a
+        if network is not None:
+            if self not in network.layers:
+                network.add_layer(self)
         return self.z
 
     def gradient(self, grad_z):
@@ -42,6 +45,9 @@ class MSELoss:
         self.label = label
         self.output = output
         mse = 0.5*np.mean((label-output)**2, axis=1)
+        if network is not None:
+            if network.cost_function is not self:
+                network.change_cost_function(self)
         return mse
 
     def gradient(self):
@@ -57,6 +63,9 @@ class Sigmoid:
 
     def __call__(self, z, network=None):
         self.z = z
+        if network is not None:
+            if self not in network.layers:
+                network.add_layer(self)
         return 1/(1+np.exp(-z))
 
     def gradient(self, grad_a):
@@ -75,6 +84,9 @@ class BCELoss:
         self.label = label
         self.output = output
         bce = -np.mean(label*np.log(output)+(1-label)*np.log(1-output), axis=1)
+        if network is not None:
+            if network.cost_function is not self:
+                network.change_cost_function(self)
         return bce
 
     def gradient(self):
@@ -85,11 +97,12 @@ class BCELoss:
 class Module:
 
     def __init__(self):
-        pass
+        self.layers = []
+        self.cost_function = None
 
     # Calculate and return outputs for given inputs.
     def __call__(self, inputs):
-        pass
+        return self.forward(inputs)
 
     # This is just a dummy method. Don't change it.
     def forward(self, inputs):
@@ -97,23 +110,31 @@ class Module:
 
     #   Add a layer to the network's list of layers
     def add_layer(self, layer):
-        pass
+            self.layers.append(layer)
 
     # change the network's cost function
     def change_cost_function(self, cost_function):
-        pass
+        self.cost_function = cost_function
 
     # Reset gradients of all linear layers
     def zero_grad(self):
-        pass
+        for layer in self.layers:
+            if isinstance(layer, Linear):
+                layer.reset_gradients()
 
     # Perform backpropagation
     def backward(self):
-        pass
+        # Backpropagation logic
+        grad_a = self.cost_function.gradient()
+
+        for layer in reversed(self.layers):
+            grad_a = layer.gradient(grad_a)
 
     # Update weights and biases in all linear layers
     def step(self, beta=0.1, lbd=0):
-        pass
+        for layer in reversed(self.layers):
+            if isinstance(layer, Linear):
+                layer.update_weights(beta, lbd)
 
 
 
