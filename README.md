@@ -58,7 +58,7 @@ The two approaches are evaluated to measure the AIR under varying SNR conditions
 
 - Clone this repository:
    ```bash
-   git clone https://github.com/your-repo-name/soft-output-detector-comparison.git
+   git clone https://github.com/z3rd3n/soft-output-detector-comparison.git
    ```
 
 
